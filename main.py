@@ -6,7 +6,7 @@ import musicLibrary
 from gpt4all import GPT4All
 # gpt model
 import time
-import os
+import os  
 import sys
 
 def voice_assistant():
