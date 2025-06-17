@@ -1,16 +1,15 @@
 import speech_recognition as sr
-# Now we dont need to write whole speechrecog... we replace it to sr
 import webbrowser
 # its a built in module no need to install
 import pyttsx3
-
 import musicLibrary
-
-# To implement key based start up
-
+from gpt4all import GPT4All
+# gpt model
+import time
+import os
+import sys
 
 def voice_assistant():
-    # recognizer = sr.Recognizer()
 
     def speak(text):
         engine = pyttsx3.init()
@@ -18,6 +17,20 @@ def voice_assistant():
         engine.say(text)
         engine.runAndWait()
     # This function is use to convert text to speech
+
+    def resource_path(relative_path):
+        try:
+            return os.path.join(sys._MEIPASS, relative_path)
+        except:
+            return os.path.abspath(relative_path)
+
+    model_path = resource_path("mistral-7b-instruct-v0.1.Q4_0.gguf")
+    model = GPT4All(model_path, allow_download=False)
+    # GPT4All model, download dependencies automatically
+
+    def gpt_response(prompt):
+        response = model.generate(prompt, max_tokens=128)
+        return response
 
     def processCommand(c):
         if "open google" in c.lower():
@@ -37,32 +50,26 @@ def voice_assistant():
                 speak("Song Not Found")
 
         elif "stop" in c.lower() or "exit" in c.lower():
-            speak("Goodbye Pardon!")
+            speak("Goodbye Femil!")
             return
-        else:
+        
+        elif len(c)==0:
             speak("Please Speak Again")
-
-    # speak("Initializing Jarvis...")
+        
+        else:
+            speak("Preparing your answer please wait")
+            model_response = gpt_response(c)
+            speak("And Here it is")
+            speak(model_response)
+            time.sleep(1)
+            speak("That was it")
+        time.sleep(1)
+        speak("To Continue Please press 's' again")
+            
     r = sr.Recognizer()
-    # speak("Jarvis Activated")
-    # speak("Jarvis Initialized")
-    # while True:
-    # Listen for the wake word jarvis
-    # obtain audio from microphone
+    
     print("recognizing...")
     try:
-        # with sr.Microphone() as source:
-            # r.adjust_for_ambient_noise(source, duration=1)
-            # print("Listening...")
-            # audio = r.listen(source, timeout=5, phrase_time_limit=4)
-            # above code is for listining from microphone
-            # timeout is time it will listen. after 2 secs it will do timeout
-            # phasetimeout is time after how much sec u take to continue
-        # word = r.recognize_google(audio)
-        # print(word)
-        # if "jarvis" in word.lower():
-            # speak("I am listening")
-            # Listen for the further command
         with sr.Microphone() as source:
             speak("Jarvis Activated")
             audio = r.listen(source, timeout=5, phrase_time_limit=5)
@@ -70,7 +77,9 @@ def voice_assistant():
             processCommand(command)
 
     except Exception as e:
-        print("Error ; {0}".format(e))
+        speak("Please press 's' and speak again")
+        print(e)
 
 if __name__ == "__main__":
     voice_assistant()   
+    
