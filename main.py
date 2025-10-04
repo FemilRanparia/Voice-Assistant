@@ -1,5 +1,5 @@
 import google.generativeai as genai
-# from config import GEMINI_API_KEY
+from config import GEMINI_API_KEY
 
 import speech_recognition as sr
 import webbrowser
@@ -12,7 +12,6 @@ import time
 import os
 import sys
 
-GEMINI_API_KEY = "AIzaSyDPMKWkVsja7XrxUhFkLRo596GCaHj_0Xs"
 genai.configure(api_key=GEMINI_API_KEY)
 
 
@@ -91,4 +90,5 @@ def voice_assistant():
 
 
 if __name__ == "__main__":
+
     voice_assistant()
