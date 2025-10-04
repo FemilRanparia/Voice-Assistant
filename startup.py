@@ -3,6 +3,7 @@ import keyboard
 import pyttsx3
 from datetime import datetime
 import random
+import threading
 
 def speak(text):    
     engine = pyttsx3.init()
@@ -11,28 +12,30 @@ def speak(text):
     engine.runAndWait()
 
 def greet(hour):
-
-    names = ['Femil', 'Operator', 'Chief', 'Captian']
+    names = ['Femil', 'Operator', 'Chief', 'Captain']
     name = random.choice(names)
 
-    if hour>=12 and hour<=16:
-        speak(f"Good Afternoon {name} Please Press 's' to Activate Jarvis")
-    elif hour>16 and hour<24:
-        speak(f"Good Evening {name} Please Press 's' to Activate Jarvis")
+    if hour >= 12 and hour <= 16:
+        speak(f"Good Afternoon {name}, please press 's' to activate Jarvis.")
+    elif hour > 16 and hour < 24:
+        speak(f"Good Evening {name}, please press 's' to activate Jarvis.")
     else:
-        speak(f"Good Morning {name} Please Press 's' to Activate Jarvis")
+        speak(f"Good Morning {name}, please press 's' to activate Jarvis.")
 
-now = datetime.now()
+def start_jarvis():
+    threading.Thread(target=voice_assistant).start()
 
-curr_hour = int(now.strftime("%H"))
+def exit_program():
+    speak("Goodbye")
+    exit(0)
 
+# Greet on start
+curr_hour = int(datetime.now().strftime("%H"))
 greet(curr_hour)
 
-keyboard.add_hotkey('s', voice_assistant)
+# Assign hotkeys
+keyboard.add_hotkey('s', start_jarvis)
+keyboard.add_hotkey('esc', exit_program)
 
-key = keyboard.get_hotkey_name()
-
-if key=='esc':
-    speak("GoodBye")
-
-keyboard.wait('esc')
+# Wait forever for any hotkey
+keyboard.wait()
